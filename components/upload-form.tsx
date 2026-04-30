@@ -13,6 +13,7 @@ export default function UploadForm(){
 
     const setLoading = useResumeStore((s) => s.setLoading);
     const setResult = useResumeStore((s) => s.setResult);
+    const setResumeText = useResumeStore((s) => s.setResumeText);
 
     const submit = async () => {
         const formData = new FormData();
@@ -39,6 +40,7 @@ export default function UploadForm(){
             improved_bullets: data.optimization_result.improved_bullets,
             summary: data.optimization_result.summary,
         });
+        setResumeText(data.resume_text);
 
         setLoading(false);
 

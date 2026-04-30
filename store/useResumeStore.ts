@@ -13,6 +13,7 @@ type Store = {
     loading: boolean;
     result: ResumeData | null;
     resumeText: string;
+
     setLoading: (v: boolean) => void;
     setResult: (data: ResumeData) => void;
     setResumeText: (text: string) => void;
@@ -22,6 +23,7 @@ export const useResumeStore = create<Store>((set) => ({
     loading: false,
     result: null,
     resumeText: "",
+
     setLoading: (v) => set({ loading: v }),
     setResult: (data) => set({ result: data }),
     setResumeText: (text) => set({ resumeText: text }),
