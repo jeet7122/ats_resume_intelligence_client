@@ -32,8 +32,8 @@ See full workflow:
 - AI Suggestions
 - Resume Editor
 
-[Watch Demo](https://raw.githubusercontent.com/jeet7122/ats_resume_intelligence_client/main/public/demo.mp4)
-
+![ATS Demo](public/demo.gif)
+- 
 ## Key Features
 
 ## Resume Upload Flow
