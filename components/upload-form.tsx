@@ -12,17 +12,20 @@ export default function UploadForm() {
 
     const setLoading = useResumeStore((s) => s.setLoading);
     const setResult = useResumeStore((s) => s.setResult);
+    const setResumeText = useResumeStore((s) => s.setResumeText);
     const setSections = useResumeStore((s) => s.setSections);
+    const resetAll = useResumeStore((s) => s.resetAll);
 
     const submit = async () => {
         if (!file || !jd.trim()) return;
 
-        const formData = new FormData();
-        formData.append("resume", file);
-        formData.append("jd", jd);
-
         try {
+            resetAll();
             setLoading(true);
+
+            const formData = new FormData();
+            formData.append("resume", file);
+            formData.append("jd", jd);
 
             router.push("/loading");
 
@@ -33,20 +36,26 @@ export default function UploadForm() {
 
             const data = await res.json();
 
-            console.log(data);
+            if (!data.success) {
+                throw new Error("Failed to analyze resume");
+            }
 
-            // AI Result
+            // AI result
             setResult({
                 score: data.scan_result.score,
                 matched_keywords: data.scan_result.matched_keywords,
                 missing_keywords: data.scan_result.missing_keywords,
                 suggestions: data.optimization_result.suggestions,
-                improved_bullets: data.optimization_result.improved_bullets,
+                improved_bullets:
+                data.optimization_result.improved_bullets,
                 summary: data.optimization_result.summary,
             });
 
-            // Structured Resume Sections
-            setSections(data.resume_text);
+            // Raw text
+            setResumeText(data.raw_resume_text || "");
+
+            // Structured sections
+            setSections(data.resume_sections);
 
             router.push("/results");
         } catch (error) {

@@ -2,105 +2,66 @@
 
 import { useResumeStore } from "@/store/useResumeStore";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function EditorPage() {
     const router = useRouter();
 
     const result = useResumeStore((s) => s.result);
     const editedSections = useResumeStore((s) => s.editedSections);
-    const setEditedSections = useResumeStore((s) => s.setEditedSections);
-
-    /**
-     * IMPORTANT:
-     * If store data does not exist, show fallback UI.
-     * Do NOT auto redirect immediately.
-     * Your old redirect logic was causing /editor to bounce away.
-     */
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
+    const setEditedSections = useResumeStore(
+        (s) => s.setEditedSections
+    );
 
     if (!result || !editedSections) {
         return (
-            <div className="min-h-screen bg-white text-black flex items-center justify-center px-6">
-                <div className="max-w-xl text-center">
+            <div className="min-h-screen flex items-center justify-center bg-white text-black">
+                <div className="text-center">
                     <h1 className="text-4xl font-bold mb-4">
                         No Resume Data Found
                     </h1>
 
-                    <p className="text-slate-600 mb-8">
-                        Please analyze your resume first before opening
-                        the editor.
-                    </p>
-
                     <button
                         onClick={() => router.push("/upload")}
-                        className="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700"
+                        className="bg-indigo-600 text-white px-6 py-3 rounded-xl"
                     >
-                        Go to Upload
+                        Upload Resume
                     </button>
                 </div>
             </div>
         );
     }
 
-    const updateSummary = (value: string) => {
-        setEditedSections({
-            ...editedSections,
-            summary: value,
-        });
-    };
-
-    const updateExperience = (index: number, value: string) => {
-        const updated = [...editedSections.experience];
-        updated[index] = value;
+    const updateSection = (
+        key: "experience" | "projects" | "education",
+        index: number,
+        value: string
+    ) => {
+        const copy = [...editedSections[key]];
+        copy[index] = value;
 
         setEditedSections({
             ...editedSections,
-            experience: updated,
+            [key]: copy,
         });
     };
 
-    const updateProjects = (index: number, value: string) => {
-        const updated = [...editedSections.projects];
-        updated[index] = value;
-
+    const addItem = (
+        key: "experience" | "projects" | "education"
+    ) => {
         setEditedSections({
             ...editedSections,
-            projects: updated,
+            [key]: [...editedSections[key], ""],
         });
     };
 
-    const updateSkills = (value: string) => {
-        setEditedSections({
-            ...editedSections,
-            skills: value
-                .split(",")
-                .map((item) => item.trim())
-                .filter(Boolean),
-        });
-    };
-
-    const updateEducation = (index: number, value: string) => {
-        const updated = [...editedSections.education];
-        updated[index] = value;
-
-        setEditedSections({
-            ...editedSections,
-            education: updated,
-        });
-    };
-
-    const replaceSummaryWithAI = () => {
+    const replaceSummary = () => {
         setEditedSections({
             ...editedSections,
             summary: result.summary,
         });
     };
 
-    const addExperienceBullet = (text: string) => {
+    const addBulletToExperience = (text: string) => {
         setEditedSections({
             ...editedSections,
             experience: [...editedSections.experience, text],
@@ -108,173 +69,186 @@ export default function EditorPage() {
     };
 
     return (
-        <div className="min-h-screen bg-white text-black grid lg:grid-cols-3">
-            {/* LEFT SIDE */}
+        <div className="grid lg:grid-cols-3 min-h-screen bg-white text-black">
+            {/* LEFT */}
             <div className="lg:col-span-2 p-8 overflow-y-auto h-screen">
-                <div className="max-w-4xl mx-auto">
-                    <h1 className="text-4xl font-bold mb-10">
-                        Resume Editor
-                    </h1>
+                <h1 className="text-4xl font-bold mb-8">
+                    Resume Editor
+                </h1>
 
-                    {/* Summary */}
-                    <section className="mb-10">
-                        <h2 className="text-2xl font-semibold mb-4">
-                            Professional Summary
-                        </h2>
+                {/* Summary */}
+                <section className="mb-10">
+                    <h2 className="text-2xl font-semibold mb-4">
+                        Summary
+                    </h2>
 
-                        <textarea
-                            value={editedSections.summary}
-                            onChange={(e) => updateSummary(e.target.value)}
-                            className="w-full h-36 border rounded-xl p-4"
-                        />
-                    </section>
+                    <textarea
+                        value={editedSections.summary}
+                        onChange={(e) =>
+                            setEditedSections({
+                                ...editedSections,
+                                summary: e.target.value,
+                            })
+                        }
+                        className="w-full h-36 border rounded-xl p-4"
+                    />
+                </section>
 
-                    {/* Experience */}
-                    <section className="mb-10">
-                        <h2 className="text-2xl font-semibold mb-4">
+                {/* Experience */}
+                <section className="mb-10">
+                    <div className="flex justify-between mb-4">
+                        <h2 className="text-2xl font-semibold">
                             Experience
                         </h2>
 
-                        {editedSections.experience.map((item, index) => (
-                            <textarea
-                                key={index}
-                                value={item}
-                                onChange={(e) =>
-                                    updateExperience(index, e.target.value)
-                                }
-                                className="w-full h-28 border rounded-xl p-4 mb-4"
-                            />
-                        ))}
-                    </section>
+                        <button
+                            onClick={() => addItem("experience")}
+                            className="text-indigo-600"
+                        >
+                            + Add
+                        </button>
+                    </div>
 
-                    {/* Projects */}
-                    <section className="mb-10">
-                        <h2 className="text-2xl font-semibold mb-4">
+                    {editedSections.experience.map((item, i) => (
+                        <textarea
+                            key={i}
+                            value={item}
+                            onChange={(e) =>
+                                updateSection(
+                                    "experience",
+                                    i,
+                                    e.target.value
+                                )
+                            }
+                            className="w-full h-32 border rounded-xl p-4 mb-4"
+                        />
+                    ))}
+                </section>
+
+                {/* Projects */}
+                <section className="mb-10">
+                    <div className="flex justify-between mb-4">
+                        <h2 className="text-2xl font-semibold">
                             Projects
                         </h2>
 
-                        {editedSections.projects.map((item, index) => (
-                            <textarea
-                                key={index}
-                                value={item}
-                                onChange={(e) =>
-                                    updateProjects(index, e.target.value)
-                                }
-                                className="w-full h-28 border rounded-xl p-4 mb-4"
-                            />
-                        ))}
-                    </section>
+                        <button
+                            onClick={() => addItem("projects")}
+                            className="text-indigo-600"
+                        >
+                            + Add
+                        </button>
+                    </div>
 
-                    {/* Skills */}
-                    <section className="mb-10">
-                        <h2 className="text-2xl font-semibold mb-4">
-                            Skills
-                        </h2>
-
+                    {editedSections.projects.map((item, i) => (
                         <textarea
-                            value={editedSections.skills.join(", ")}
-                            onChange={(e) => updateSkills(e.target.value)}
-                            className="w-full h-24 border rounded-xl p-4"
+                            key={i}
+                            value={item}
+                            onChange={(e) =>
+                                updateSection(
+                                    "projects",
+                                    i,
+                                    e.target.value
+                                )
+                            }
+                            className="w-full h-32 border rounded-xl p-4 mb-4"
                         />
-                    </section>
+                    ))}
+                </section>
 
-                    {/* Education */}
-                    <section className="mb-10">
-                        <h2 className="text-2xl font-semibold mb-4">
+                {/* Skills */}
+                <section className="mb-10">
+                    <h2 className="text-2xl font-semibold mb-4">
+                        Skills
+                    </h2>
+
+                    <textarea
+                        value={editedSections.skills.join(", ")}
+                        onChange={(e) =>
+                            setEditedSections({
+                                ...editedSections,
+                                skills: e.target.value
+                                    .split(",")
+                                    .map((x) => x.trim())
+                                    .filter(Boolean),
+                            })
+                        }
+                        className="w-full h-28 border rounded-xl p-4"
+                    />
+                </section>
+
+                {/* Education */}
+                <section className="mb-10">
+                    <div className="flex justify-between mb-4">
+                        <h2 className="text-2xl font-semibold">
                             Education
                         </h2>
 
-                        {editedSections.education.map((item, index) => (
-                            <textarea
-                                key={index}
-                                value={item}
-                                onChange={(e) =>
-                                    updateEducation(index, e.target.value)
-                                }
-                                className="w-full h-24 border rounded-xl p-4 mb-4"
-                            />
-                        ))}
-                    </section>
+                        <button
+                            onClick={() => addItem("education")}
+                            className="text-indigo-600"
+                        >
+                            + Add
+                        </button>
+                    </div>
 
-                    <button
-                        onClick={() => router.push("/export")}
-                        className="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700"
-                    >
-                        Continue to Export
-                    </button>
-                </div>
+                    {editedSections.education.map((item, i) => (
+                        <textarea
+                            key={i}
+                            value={item}
+                            onChange={(e) =>
+                                updateSection(
+                                    "education",
+                                    i,
+                                    e.target.value
+                                )
+                            }
+                            className="w-full h-28 border rounded-xl p-4 mb-4"
+                        />
+                    ))}
+                </section>
             </div>
 
-            {/* RIGHT SIDE */}
+            {/* RIGHT */}
             <div className="border-l bg-slate-50 p-8 overflow-y-auto h-screen">
-                <h2 className="text-3xl font-bold mb-8">
-                    AI Recommendations
+                <h2 className="text-3xl font-bold mb-6">
+                    AI Suggestions
                 </h2>
 
-                {/* Score */}
-                <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-                    <p className="text-slate-500 mb-2">ATS Score</p>
-                    <h3 className="text-5xl font-bold">
-                        {result.score}%
-                    </h3>
-                </div>
-
-                {/* Missing Keywords */}
-                <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-                    <h3 className="font-semibold mb-4">
-                        Missing Keywords
-                    </h3>
-
-                    <div className="flex flex-wrap gap-2">
-                        {result.missing_keywords.map((item, index) => (
-                            <span
-                                key={index}
-                                className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm"
-                            >
-                {item}
-              </span>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Summary */}
-                <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+                <div className="bg-white p-6 rounded-2xl mb-6">
                     <h3 className="font-semibold mb-3">
-                        Optimized Summary
+                        Better Summary
                     </h3>
 
-                    <p className="text-sm text-slate-700 mb-4 whitespace-pre-line">
+                    <p className="text-sm mb-4">
                         {result.summary}
                     </p>
 
                     <button
-                        onClick={replaceSummaryWithAI}
-                        className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+                        onClick={replaceSummary}
+                        className="bg-indigo-600 text-white px-4 py-2 rounded-lg"
                     >
                         Replace Summary
                     </button>
                 </div>
 
-                {/* Bullets */}
-                <div className="space-y-4">
-                    {result.improved_bullets.map((item, index) => (
-                        <div
-                            key={index}
-                            className="bg-white rounded-2xl p-6 shadow-sm"
-                        >
-                            <p className="text-sm text-slate-700 mb-4">
-                                {item}
-                            </p>
+                {result.improved_bullets.map((item, i) => (
+                    <div
+                        key={i}
+                        className="bg-white p-6 rounded-2xl mb-4"
+                    >
+                        <p className="text-sm mb-4">{item}</p>
 
-                            <button
-                                onClick={() => addExperienceBullet(item)}
-                                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
-                            >
-                                Add to Experience
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                        <button
+                            onClick={() =>
+                                addBulletToExperience(item)
+                            }
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-lg"
+                        >
+                            Add to Experience
+                        </button>
+                    </div>
+                ))}
             </div>
         </div>
     );

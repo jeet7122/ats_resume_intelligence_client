@@ -20,25 +20,22 @@ export type ResumeSections = {
 type ResumeStore = {
     loading: boolean;
 
-    // backend AI response
     result: ResumeResult | null;
 
-    // raw parsed resume text
+    // raw extracted resume text
     resumeText: string;
 
-    // structured sections
+    // parsed structured sections
     sections: ResumeSections | null;
 
-    // live editable version
+    // live editable data
     editedSections: ResumeSections | null;
 
-    // actions
     setLoading: (value: boolean) => void;
     setResult: (data: ResumeResult) => void;
     setResumeText: (text: string) => void;
     setSections: (data: ResumeSections) => void;
     setEditedSections: (data: ResumeSections) => void;
-
     resetAll: () => void;
 };
 
@@ -58,7 +55,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
     setSections: (data) =>
         set({
             sections: data,
-            editedSections: data,
+            editedSections: JSON.parse(JSON.stringify(data)),
         }),
 
     setEditedSections: (data) =>

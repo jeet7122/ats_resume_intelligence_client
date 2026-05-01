@@ -1,36 +1,159 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ATS Resume Intelligence Client
 
-## Getting Started
+Frontend application for the ATS Resume Intelligence Platform.  
+Built to help users upload resumes, compare them against job descriptions, receive ATS scores, and apply AI-powered resume improvements through an interactive editor.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Overview
+
+This client application provides a complete user-facing workflow for resume optimization.
+
+Users can:
+
+- Upload a resume PDF
+- Paste a job description
+- Analyze ATS compatibility
+- Review matched and missing keywords
+- Edit resume sections
+- Apply AI-generated suggestions
+- Improve summaries and bullet points
+- Optimize resumes for recruiter visibility
+
+---
+
+## Product Demo
+
+See full workflow:
+
+- Resume Upload
+- ATS Score Generation
+- Missing Keyword Detection
+- AI Suggestions
+- Resume Editor
+
+[Watch Demo](https://raw.githubusercontent.com/jeet7122/ats_resume_intelligence_client/main/public/demo.mp4)
+
+## Key Features
+
+## Resume Upload Flow
+
+- Upload PDF resume files
+- Paste target job description
+- Submit for analysis
+
+## Smart Analysis Loader
+
+Displays real-time workflow progress such as:
+
+- Resume parsed
+- ATS score calculating
+- AI optimization in progress
+
+## ATS Results Dashboard
+
+Displays:
+
+- ATS Score
+- Matched Keywords
+- Missing Keywords
+- Resume Improvement Suggestions
+
+## Resume Editor
+
+Editable sections include:
+
+- Summary
+- Experience
+- Projects
+- Skills
+- Education
+
+## AI Suggestions Panel
+
+One-click actions:
+
+- Replace Summary
+- Add Experience Bullet Points
+- Improve Resume Content
+
+---
+
+## Screens Included
+
+- Upload Page
+- Analysis Loading Screen
+- Results Dashboard
+- Resume Editor with AI Suggestions
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- React
+- TypeScript / JavaScript
+- HTML5
+- CSS3
+
+### API Integration
+
+- Axios / Fetch API
+- FastAPI Backend
+
+### UX
+
+- Responsive Layout
+- Interactive Forms
+- Dynamic State Updates
+
+---
+
+## Application Flow
+
+```text
+Upload Resume + Paste JD
+        |
+        v
+Submit Request
+        |
+        v
+Loading / Analysis Screen
+        |
+        v
+Results Dashboard
+        |
+        v
+Resume Editor
+        |
+        v
+Apply AI Suggestions
+        |
+        v
+Export / Use Updated Resume
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Backend Dependency
+This frontend connects to the backend platform:
+```
+https://github.com/jeet7122/ats_resume_intelligence_platform
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Backend responsibilities:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* PDF parsing 
+* Resume section extraction 
+* ATS scoring 
+* Missing keyword detection 
+* AI optimization 
+* Structured JSON responses
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Future Enhancements
+- Resume PDF export 
+- Authentication 
+- Resume history 
+- Multiple templates 
+- Live job scraping 
+- Dark mode 
+- Cover letter generator
